@@ -8,6 +8,39 @@ Use `/reading-list add <arxiv_id>` to add papers here.
 
 ---
 
+## Geometric-Mean Policy Optimization
+- **ArXiv**: 2507.20673 | https://arxiv.org/abs/2507.20673
+- **Authors**: Yuzhong Zhao, Yue Liu, Junpeng Liu, Furu Wei et al. (12 authors, Microsoft Research affiliates)
+- **Status**: 📖 Unread
+- **Categories**: cs.LG, cs.CL
+- **Conference**: 🤗 HF Daily Pick
+- **Added**: 2026-02-25
+- **Notes**: GMPO — 用几何均值替代 GRPO 的算术均值，解决 token 重要性采样比极端值导致的训练不稳定。GMPO-7B 在数学推理 benchmark 上平均超过 GRPO +4.1%，多模态推理 +1.4%。即插即用，直接替换 GRPO。代码: https://github.com/callsys/GMPO
+
+---
+
+## Audio Flamingo 3: Advancing Audio Intelligence with Fully Open Large Audio Language Models
+- **ArXiv**: 2507.08128 | https://arxiv.org/abs/2507.08128
+- **Authors**: Arushi Goel, Sreyan Ghosh, Jaehyeon Kim et al. (NVIDIA + UMD)
+- **Status**: 📖 Unread
+- **Categories**: cs.SD, cs.CL, cs.LG
+- **Conference**: NeurIPS 2025 Spotlight
+- **Added**: 2026-02-25
+- **Notes**: AF3 — 统一处理语音/音效/音乐的开源大音频语言模型，AF-Whisper 编码器 + Qwen2.5-7B + Streaming TTS，50M 音频文本对训练，在 20+ benchmark SOTA，支持最长 10 分钟音频推理。模型: nvidia/audio-flamingo-3
+
+---
+
+## SmolDocling: An Ultra-Compact Vision-Language Model for End-to-End Multi-Modal Document Conversion
+- **ArXiv**: 2503.11576 | https://arxiv.org/abs/2503.11576
+- **Authors**: IBM Research + Hugging Face
+- **Status**: 📖 Unread
+- **Categories**: cs.CV, cs.CL
+- **Conference**: ICCV 2025
+- **Added**: 2026-02-25
+- **Notes**: 仅 256M 参数端到端文档转换 VLM，引入 DocTags 格式，性能匹敌 27 倍大的模型。0.35秒/页，0.489GB VRAM，支持 Transformers/VLLM/ONNX/MLX。代码/表格/方程 F1 均超 Qwen2.5-VL(7B)。模型: ds4sd/SmolDocling-256M-preview
+
+---
+
 ## Routing Matters in MoE: Scaling Diffusion Transformers with Explicit Routing Guidance
 - **ArXiv**: 2510.24711 | https://arxiv.org/abs/2510.24711
 - **Authors**: ali-vilab team (Alibaba DAMO Academy) et al.
