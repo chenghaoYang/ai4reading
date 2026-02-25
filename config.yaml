@@ -1,0 +1,37 @@
+# ai4reading — User Configuration
+# Customize these settings to match your research interests.
+
+# ── Research Interests ──────────────────────────────────────────────────────
+interests:
+  # Keywords used to rank/filter papers (case-insensitive, matches title & abstract)
+  keywords:
+    - "large language model"
+    - "reasoning"
+    - "multimodal"
+    - "agent"
+    - "diffusion"
+    - "alignment"
+    - "RLHF"
+    - "code generation"
+    - "retrieval augmented"
+    - "vision language"
+
+  # ArXiv categories to monitor (see: https://arxiv.org/category_taxonomy)
+  categories:
+    - cs.AI   # Artificial Intelligence
+    - cs.LG   # Machine Learning
+    - cs.CL   # Computation and Language (NLP)
+    - cs.CV   # Computer Vision
+    # - cs.RO   # Robotics
+    # - cs.NE   # Neural and Evolutionary Computing
+    # - stat.ML # Statistics / Machine Learning
+
+# ── Daily Digest Settings ───────────────────────────────────────────────────
+daily:
+  limit: 20         # Max total papers to show in daily digest
+  days_back: 1      # Days to look back (use 3 for weekend catch-up)
+
+# ── Search Defaults ─────────────────────────────────────────────────────────
+search:
+  default_limit: 10
+  default_days: 7   # 0 = no date filter

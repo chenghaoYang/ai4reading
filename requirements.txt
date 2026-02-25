@@ -1,0 +1,14 @@
+# ai4reading — Python dependencies
+# Install with: pip install -r requirements.txt
+
+# HTTP requests (fallback for urllib)
+requests>=2.31.0
+
+# ArXiv Atom feed parser (optional but recommended)
+feedparser>=6.0.0
+
+# YAML config file parsing
+PyYAML>=6.0
+
+# Hugging Face page scraping (optional — falls back to regex if not installed)
+beautifulsoup4>=4.12.0
