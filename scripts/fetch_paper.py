@@ -21,6 +21,8 @@ import xml.etree.ElementTree as ET
 
 ARXIV_API = "https://export.arxiv.org/api/query"
 PWC_API = "https://paperswithcode.com/api/v1/papers/"
+# Semantic Scholar API — free, no key required for basic fields
+SS_API = "https://api.semanticscholar.org/graph/v1/paper"
 
 
 def parse_arxiv_id(url_or_id: str) -> str:
@@ -128,12 +130,35 @@ def fetch_pwc_repos(arxiv_id: str) -> list[dict]:
         return []
 
 
+def fetch_semantic_scholar(arxiv_id: str) -> dict:
+    """Fetch citation count and TLDR from Semantic Scholar."""
+    clean_id = re.sub(r"v\d+$", "", arxiv_id)
+    fields = "citationCount,influentialCitationCount,tldr"
+    url = f"{SS_API}/arXiv:{urllib.parse.quote(clean_id)}?fields={fields}"
+    try:
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "ai4reading/1.0",
+            "Accept": "application/json",
+        })
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        return {
+            "citation_count": data.get("citationCount", 0),
+            "influential_citations": data.get("influentialCitationCount", 0),
+            "semantic_tldr": (data.get("tldr") or {}).get("text", ""),
+        }
+    except Exception:
+        return {}
+
+
 def main():
     parser = argparse.ArgumentParser(description="Fetch single paper details")
     parser.add_argument("--id", "-i", required=True,
                         help="ArXiv ID (e.g. 2312.11805) or URL")
     parser.add_argument("--no-pwc", action="store_true",
                         help="Skip Papers with Code lookup")
+    parser.add_argument("--no-ss", action="store_true",
+                        help="Skip Semantic Scholar lookup")
     args = parser.parse_args()
 
     arxiv_id = parse_arxiv_id(args.id)
@@ -152,6 +177,10 @@ def main():
         paper["code_repos"] = fetch_pwc_repos(arxiv_id)
     else:
         paper["code_repos"] = []
+
+    if not args.no_ss:
+        ss_data = fetch_semantic_scholar(arxiv_id)
+        paper.update(ss_data)
 
     print(json.dumps(paper, ensure_ascii=False, indent=2))
 

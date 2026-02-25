@@ -25,15 +25,9 @@ try:
 except ImportError:
     HAS_YAML = False
 
-try:
-    from bs4 import BeautifulSoup
-    HAS_BS4 = True
-except ImportError:
-    HAS_BS4 = False
-
-
 ARXIV_API = "https://export.arxiv.org/api/query"
-HF_PAPERS_URL = "https://huggingface.co/papers"
+# Official Hugging Face Daily Papers API (no key needed)
+HF_DAILY_API = "https://huggingface.co/api/daily_papers"
 
 DEFAULT_CATEGORIES = ["cs.AI", "cs.LG", "cs.CL", "cs.CV"]
 DEFAULT_KEYWORDS = ["large language model", "reasoning", "multimodal", "agent", "diffusion"]
@@ -127,83 +121,61 @@ def fetch_arxiv_category(category: str, days: int, max_results: int) -> list[dic
     return papers
 
 
-def fetch_hf_daily_papers() -> list[dict]:
-    """Scrape Hugging Face Daily Papers page for today's highlights."""
+def fetch_hf_daily_papers(date_str: str | None = None, limit: int = 50) -> list[dict]:
+    """Fetch Hugging Face Daily Papers using the official API.
+
+    Args:
+        date_str: Optional date in YYYY-MM-DD format (defaults to today).
+        limit: Maximum number of papers to return.
+    """
+    params = {"limit": limit}
+    if date_str:
+        params["date"] = date_str
+    url = HF_DAILY_API + "?" + urllib.parse.urlencode(params)
+
     try:
         req = urllib.request.Request(
-            HF_PAPERS_URL,
+            url,
             headers={
-                "User-Agent": "Mozilla/5.0 (compatible; ai4reading/1.0)",
-                "Accept": "text/html,application/xhtml+xml",
+                "User-Agent": "ai4reading/1.0",
+                "Accept": "application/json",
             }
         )
         with urllib.request.urlopen(req, timeout=20) as resp:
-            html = resp.read().decode("utf-8")
+            raw = json.loads(resp.read().decode("utf-8"))
     except Exception as e:
         print(f"Warning: Failed to fetch HF papers: {e}", file=sys.stderr)
         return []
 
-    if not HAS_BS4:
-        # Minimal regex fallback — extract ArXiv IDs from HF papers page
-        arxiv_ids = re.findall(r"arxiv\.org/abs/([0-9]{4}\.[0-9]{4,5})", html)
-        papers = []
-        for aid in dict.fromkeys(arxiv_ids):  # Deduplicate preserving order
-            papers.append({
-                "id": aid,
-                "title": f"ArXiv:{aid}",
-                "authors": [],
-                "abstract": "",
-                "url": f"https://arxiv.org/abs/{aid}",
-                "pdf_url": f"https://arxiv.org/pdf/{aid}",
-                "submitted": "",
-                "updated": "",
-                "categories": [],
-                "source": "huggingface",
-                "hf_upvotes": 0,
-            })
-        return papers[:30]
-
-    soup = BeautifulSoup(html, "html.parser")
     papers = []
-
-    # HF papers page structure: articles with paper info
-    for article in soup.find_all("article"):
-        title_el = article.find("h3") or article.find("h2")
-        title = title_el.get_text(strip=True) if title_el else ""
-
-        # Find ArXiv link
-        arxiv_id = ""
-        for a in article.find_all("a", href=True):
-            m = re.search(r"arxiv\.org/abs/([0-9]{4}\.[0-9]{4,5})", a["href"])
-            if m:
-                arxiv_id = m.group(1)
-                break
-
+    for item in raw:
+        paper_obj = item.get("paper", item)
+        arxiv_id = paper_obj.get("id", "")
         if not arxiv_id:
             continue
 
-        # Upvotes
-        upvote_el = article.find(class_=re.compile(r"upvote|vote|like", re.I))
-        upvotes = 0
-        if upvote_el:
-            m = re.search(r"\d+", upvote_el.get_text())
-            if m:
-                upvotes = int(m.group())
+        authors_raw = paper_obj.get("authors", [])
+        authors = [
+            a.get("name", a) if isinstance(a, dict) else str(a)
+            for a in authors_raw
+        ]
 
         papers.append({
             "id": arxiv_id,
-            "title": title or f"ArXiv:{arxiv_id}",
-            "authors": [],
-            "abstract": "",
+            "title": paper_obj.get("title", ""),
+            "authors": authors,
+            "abstract": paper_obj.get("summary", paper_obj.get("abstract", "")),
             "url": f"https://arxiv.org/abs/{arxiv_id}",
             "pdf_url": f"https://arxiv.org/pdf/{arxiv_id}",
-            "submitted": "",
+            "submitted": (paper_obj.get("publishedAt", "") or "")[:10],
             "updated": "",
             "categories": [],
             "source": "huggingface",
-            "hf_upvotes": upvotes,
+            "hf_upvotes": item.get("upvotes", 0),
         })
 
+    # Sort by upvotes descending
+    papers.sort(key=lambda p: p["hf_upvotes"], reverse=True)
     return papers
 
 
