@@ -8,6 +8,17 @@ Use `/reading-list add <arxiv_id>` to add papers here.
 
 ---
 
+## Accelerating Scientific Research with Gemini: Case Studies and Common Techniques
+- **ArXiv**: 2602.03837 | https://arxiv.org/abs/2602.03837
+- **Authors**: David P. Woodruff, Vincent Cohen-Addad, Lalit Jain et al. (36 authors, Google DeepMind)
+- **Status**: 📖 Unread
+- **Categories**: cs.CL, cs.AI
+- **Conference**: Not yet published
+- **Added**: 2026-03-05
+- **Notes**: 151页案例集，记录 Gemini Deep Think 与理论CS/经济/物理研究者的真实协作。三大模式：①对抗评审（SNARGs密码学漏洞检测：迭代自我纠正5步提示法）②跨域迁移（Max-Cut→测度论/Stone-Weierstrass；Steiner树→Kirszbraun延伸定理）③神经符号循环（宇宙弦谱积分：~600分支树搜索+Python自动验证，80%自动剪枝，找到O(1)闭合解）。关键技巧：负向提示、上下文去识别、脚手架推理。
+
+---
+
 ## Geometric-Mean Policy Optimization
 - **ArXiv**: 2507.20673 | https://arxiv.org/abs/2507.20673
 - **Authors**: Yuzhong Zhao, Yue Liu, Junpeng Liu, Furu Wei et al. (12 authors, Microsoft Research affiliates)

@@ -19,6 +19,7 @@ The reading list is stored in `papers/reading_list.md`.
 | `/reading-list remove <arxiv_id>` | Remove a paper from the list |
 | `/reading-list search <query>` | Search within the reading list |
 | `/reading-list note <arxiv_id> "<note>"` | Add a note to a paper |
+| `/reading-list deep-dive-note <arxiv_id>` | Interactively fill in Key Results and Key Examples fields |
 | `/reading-list stats` | Show reading statistics |
 
 ## Examples
@@ -62,7 +63,10 @@ Papers I want to read, am reading, or have finished.
 - **Status**: 📖 Unread
 - **Categories**: <cats>
 - **Added**: <YYYY-MM-DD>
-- **Notes**:
+- **Soundness**: ⭐⭐⭐ /5
+- **Key Results**: 
+- **Key Examples**: 
+- **Notes**: 
 
 ---
 ```
@@ -132,6 +136,20 @@ Papers I want to read, am reading, or have finished.
 3. Update the `- **Notes**:` line to include the new text
 4. Write back to `papers/reading_list.md`
 5. Confirm the note was added.
+
+---
+
+### Command: `deep-dive-note <arxiv_id>`
+
+1. Read `papers/reading_list.md`
+2. Find the paper entry for that ArXiv ID
+3. Ask the user:
+   - "What are the key results? (metrics, benchmarks, numbers)"
+   - "What are the key examples or case studies?"
+   - "Soundness rating? (1-5 stars)"
+4. Update the corresponding fields in the entry
+5. Write back to `papers/reading_list.md`
+6. Confirm the fields were updated.
 
 ---
 

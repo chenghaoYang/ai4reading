@@ -56,6 +56,9 @@ python3 scripts/fetch_paper.py --id "<arxiv_id_or_url>"
 ## Results
 <What are the main experimental results or findings? Include specific numbers/metrics if mentioned in the abstract. 3-4 sentences.>
 
+## Key Examples
+<If the paper contains case studies, experiments, or illustrative examples, list the most important ones with one sentence each. If only abstract is available, note: "Run `/deep-dive <id>` to extract concrete examples from the full paper.">
+
 ## Significance
 <Why does this matter for the field? Who would benefit from reading this? 2-3 sentences.>
 
@@ -63,11 +66,16 @@ python3 scripts/fetch_paper.py --id "<arxiv_id_or_url>"
 <2-3 closely related papers or research directions this builds on or competes with.>
 ```
 
-5. After the summary, ask:
-   - "Would you like to add this paper to your reading list? (`/reading-list add <id>`)"
-   - "Want to explore related papers? (`/search-papers <topic>`)"
+5. After the summary, check if the paper likely contains rich case studies by looking for keywords in the abstract: "case study", "case studies", "experiment", "we show", "we demonstrate", "counterexample", "we prove". If found, add this line:
 
-6. If the abstract alone is insufficient for a full summary, note what information is unavailable and do your best with what's provided.
+   > 💡 **This paper contains concrete case studies/experiments** → run `/deep-dive <arxiv_id>` to extract them with full details.
+
+6. Then ask:
+   - "Add to reading list? (`/reading-list add <id>`)"
+   - "Deep dive into examples? (`/deep-dive <id>`)"
+   - "Explore related papers? (`/search-papers <topic>`)"
+
+7. If the abstract alone is insufficient for a full summary, note what information is unavailable and do your best with what's provided.
 
 ## Notes
 - The summary is generated from the abstract and metadata — it does not read the full PDF
