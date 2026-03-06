@@ -1,0 +1,178 @@
+--- Page 7 ---
+Concurrent Work.
+A recent work [47] does mathematical discovery at scale using AI-assisted
+methodologies. Our work aligns with it in demonstrating the potential of AI as a collaborative
+partner in theoretical research, but we offer a distinct set of case studies and a focus on specific TCS
+domains. Additionally, we note independent works [84, 86] that further contribute to the growing
+body of literature on AI in mathematics and science.
+In concurrent and independent work of Feng et al. [35, 36], they study similar Gemini-based
+models using similar techniques, though their focus is on pure math problems whereas ours is mostly
+on other disciplines, such as many areas of theoretical computer science, as well as economics and
+physics.
+Roadmap
+The remainder of this paper is organized as follows. Section 2 synthesizes the common
+techniques and methodologies derived from these case studies. The sections after that give detailed
+and extensive testimonials from each collaboration, roughly categorized by the main role of the AI in
+the collaboration. Finally, Section 2.8 discusses the broader implications for the future of theoretical
+research.
+2
+Techniques for AI-Assisted Research
+Across the various successful collaborations documented here, several common techniques emerged.
+These strategies represent a "playbook" for researchers looking to integrate AI into their theoretical
+work.
+2.1
+Iterative Prompting and Refinement
+Rarely does a model solve a deep open problem in a single shot. Success often comes from an
+iterative dialogue.
+• Initial Broad Query: Start by asking the model to digest a relevant paper or problem
+statement to gauge its understanding.
+• Specific Sub-tasks: Break down the main problem into smaller, verifiable lemmas or
+calculations.
+• Error Correction: When the model makes a mistake (e.g., a wrong constant or invalid
+assumption), pointing it out specifically often leads to a correct and sometimes more elegant
+solution in the next turn.
+• Scaffolding: Providing the model with a high-level proof strategy or "scaffold" allows it to
+fill in the technical details effectively.
+• Adversarial Self-Correction for Review: When tasked with reviewing complex proofs,
+standard prompts often yield superficial results. A rigorous protocol instructing the model to
+(1) generate an initial review, (2) critique its own findings for hallucinations, and (3) iteratively
+refine the logic, enables deep technical critique. This was critical in identifying the flaw in the
+SNARGs paper (Section 3.2), where the model distinguished between a definition of perfect
+consistency and a construction of statistical consistency.
+7
+
+--- Page 8 ---
+2.2
+Cross-Pollination of Ideas
+Models have ingested vast amounts of literature across all fields. They excel at:
+• Finding Analogies: Identifying similar problems in different domains (e.g., applying tech-
+niques from computational geometry to graph theory).
+• Retrieving obscure theorems: Bringing relevant but less-known theorems to the researcher’s
+attention (e.g., Stone-Weierstrass or Kirszbraun Extension Theorem) to bridge gaps in a proof.
+(a) From Discrete Combinatorics to Con-
+tinuous Measure Theory: To resolve an open
+question about bounded-rank SDP solutions for
+Max-Cut, the AI reframed a discrete combinato-
+rial problem involving unit vectors into an energy
+minimization problem over continuous probabil-
+ity measures on the unit sphere (Sd−1, illustrated
+above). This cross-pollination allowed the AI to
+bypass traditional approximation tool-kits and in-
+stead apply the Stone-Weierstrass Theorem from
+geometric functional analysis to establish the nec-
+essary variance bounds. See Section 4.1.
+(b) From Graph Embeddings to Hilbert
+Space Geometry: To resolve the "Simplex is
+Best" conjecture for Euclidean Steiner Trees, the
+AI constructed a mapping from the Euclidean em-
+bedding of an arbitrary graph (orange network,
+left) to the embedding of a star graph, which
+forms a regular geometric simplex (green tetra-
+hedron, right). By recognizing this as a distance-
+compressing (1-Lipschitz) map, the AI realized
+it could apply the obscure Kirszbraun Extension
+Theorem to formally guarantee that transform-
+ing the graph into a simplex never increases the
+Steiner tree cost. See Section 4.2.
+Figure 2: Visualizing Cross-Pollination: The AI model successfully resolved open problems by
+reframing them in entirely different mathematical domains, bringing advanced topological and
+geometric theorems to bear on algorithmic and combinatorial problems.
+2.3
+Simulation and Counterexample Search
+For conjectures, models can be tasked to:
+• Construct Counterexamples: Generating specific instances (graphs, matrices, set systems)
+that violate a proposed conjecture.
+• Verify Small Cases: Writing code to computationally verify a conjecture for small n,
+providing empirical evidence before attempting a general proof.
+2.4
+Formalization and Rigor Checks
+While models can hallucinate, they are increasingly capable of formal reasoning when prompted
+correctly.
+8
+
+--- Page 9 ---
+• Proof Sketch to Formal Proof: Asking the model to expand a high-level sketch into a
+rigorous LATEX proof.
+• Sanity Checking: Using the model to check consistent usage of notation or to verify that all
+conditions of a theorem are met.
+• Mathematical Derivation: Researchers can offload the mechanical heavy lifting of complex
+derivations to the model, such as simplifying expressions, computing limits, or solving integrals,
+allowing them to focus on the high-level logic.
+2.5
+Interactive Proof Construction with External Validation
+A powerful technique involves using the model to identify necessary external theorems and then
+validating those theorems with external sources.
+• Identifying Dependencies: Asking the model to list all external theorems required for a
+proof.
+• External Verification: The researcher finds the formal statements of these theorems (e.g.,
+via Google Search or textbooks) and feeds them back to the model.
+• Self-Contained Proof Generation: The model then incorporates these verified statements
+to generate a rigorous, self-contained proof.
+2.6
+Agentic Tool-Use and Automated Feedback
+While most of the collaborations documented here rely on manual, iterative dialogue, frontier models
+can also be deployed as agents within automated programmatic loops. For problems requiring heavy
+algebraic manipulation or where symbolic math must be rigorously grounded in numerical reality
+(e.g., the physics case study in Section 6.4), researchers can construct a “neuro-symbolic" pipeline
+consisting of the following steps:
+• Symbolic Proposal: The LLM generates a mathematical hypothesis or intermediate expres-
+sion.
+• Code Generation: The LLM autonomously writes an executable script (e.g., in Python) to
+evaluate its proposed math against a known numerical baseline.
+• Automated Feedback: The system executes the code. If the code fails, hits a runtime error,
+or reveals numerical instability (such as catastrophic cancellation), the automated harness
+captures the exact execution traceback and injects it back into the LLM’s context window.
+This programmatic loop allows the AI to systematically explore a tree of mathematical solutions,
+autonomously pruning dead-ends and self-correcting its algebra without requiring a human-in-the-loop
+for every intermediate step.
+2.7
+Human-AI Collaboration Dynamics
+It is important to note that AI models like Gemini function best as powerful collaborators rather
+than autonomous researchers. In the successful case studies presented here, the partnership between
+the model and the human expert was key to the results.
+9
+
+--- Page 10 ---
+• Selection and Refinement: Models are capable of generating a high volume of diverse
+mathematical statements. Human expertise is valuable for filtering these outputs and identifying
+the most promising directions for further investigation.
+• Iterative Guidance: While models can solve some problems in a single shot, tackling deep
+open problems is often most successful through an iterative process. The researcher guides the
+model, refining the problem statement and narrowing the focus to achieve the desired result.
+• Standard Verification: As with any research collaboration, the AI can make mistakes,
+and AI-generated proofs and counterexamples benefit from rigorous verification. The model
+serves as an excellent accelerator for ideation and drafting, while the researcher validates the
+mathematical correctness.
+• Optimizing Context: Performance is often optimized by providing clear, self-contained
+definitions, particularly when using highly specialized notation that may deviate from standard
+literature.
+• Leveraging Literature: We found that incorporating relevant papers directly into the context
+significantly enhanced the model’s ability to construct correct proofs for specialized domains.
+• Context De-Identification: The model sometimes avoids non-trivial machinery (for example,
+the Kirszbraun extension theorem as in Section 4.2), treating such proofs as non-elementary, or
+it may do so because the prompt steers it toward conservatism to avoid hallucinations, causing
+it to abandon an otherwise viable approach. Separately, on occasion, when shown the paper as
+context in the prompt, it recognizes the statement to prove as a conjecture in the paper and
+refuses to attempt it on the grounds that it is an open problem. One way to bypass both issues
+is via context de-identification (remove the paper and provide only the problem statement
+and definitions), after which the model typically engages (and, in cases like Section 4.2, may
+ultimately draw on deeper results to resolve a conjecture).
+We view the AI as a tireless, knowledgeable, and creative bright junior collaborator. Its value lies
+in its ability to synthesize vast amounts of information and generate novel hypotheses that human
+researchers can then validate and build upon.
+2.8
+Summary: The AI-Assisted Research Playbook
+Taken together, the techniques outlined above represent a fundamental shift in how theoretical
+research can be conducted. The LLM is no longer acting merely as a search engine or a syntax
+formatter; it is functioning as a combinatorial reasoning engine and a sounding board for abstract
+ideation.
+However, the most successful collaborations documented in the following case studies all share
+a common denominator: strong human orchestration. Although several of our successes came
+from a single “zero-shot" prompt, many required scaffolded reasoning, i.e., breaking down deep
+open problems into verifiable parts, testing hypotheses through adversarial prompting, and actively
+steering the model. Informally this interactive workflow has been called “vibe-proving".
+By mastering the techniques outlined above—particularly iterative refinement and adversarial
+self-correction—researchers can effectively elevate the AI from a passive tool into an active, high-
+leverage research partner. The following sections document these dynamics in practice across a wide
+array of disciplines.
+10

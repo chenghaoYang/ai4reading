@@ -1,0 +1,26 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "fetch-daily",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["scripts/fetch_daily.py"],
+      "port": null,
+      "_note": "CLI script — outputs JSON to stdout, no HTTP server"
+    },
+    {
+      "name": "fetch-arxiv",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["scripts/fetch_arxiv.py", "--query", "LLM reasoning", "--limit", "10"],
+      "port": null,
+      "_note": "CLI script — outputs JSON to stdout, no HTTP server"
+    },
+    {
+      "name": "fetch-paper",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["scripts/fetch_paper.py", "--id", "2312.11805"],
+      "port": null,
+      "_note": "CLI script — outputs JSON to stdout, no HTTP server"
+    }
+  ]
+}

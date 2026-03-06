@@ -1,0 +1,596 @@
+--- Page 19 ---
+4
+Cross-Pollination of Ideas
+In this section we see AI acting as an interdisciplinary bridge, retrieving obscure theorems from
+entirely different mathematical domains to overcome roadblocks.
+4.1
+Approximation Algorithms: Max-Cut
+Written by Euiwoong Lee.
+Problem Context
+The Goemans-Williamson (GW) algorithm uses Semidefinite Programming (SDP) to achieve an
+optimal 0.878-approximation for Max-Cut. A long-standing open question asks whether rounding
+SDP solutions of bounded rank d can yield a better approximation ratio. While known for d = 2, 3,
+the case for general d remained open.
+I realized that this could be resolved if the following simple and natural geometric property held:
+Does the variance of a sum of random variables X = P sgn(⟨g, vi⟩) (where vi are unit vectors with
+bounded pairwise inner products) have a lower bound C(d)n2?
+AI Contribution
+The model solved this geometric variance question.
+• Synthesizing Advanced Math: The model recognized this as a problem solvable via
+geometric functional analysis, a field outside the typical approximation algorithms toolkit.
+• Proof via Measure Theory: It constructed a proof using the compactness of the space of
+probability measures on the sphere.
+• Iterative Rigor: When we questioned the validity of using “relaxed" measure spaces, the
+model justified its steps by citing and applying the Stone-Weierstrass Theorem, the Riesz
+Representation Theorem, and properties of spherical harmonics.
+Max-Cut on Bounded-dimension SDP Solutions
+Max-Cut is one of the most fundamental problems in combinatorial optimization and approximation
+algorithms. Given an undirected graph G = (V, E), the goal is to partition V into V + and V −
+to maximize the number of edges between V + and V −; equivalently, compute x : V →{±1} to
+maximize P
+(u,v)∈E
+1−x(u)x(v)
+2
+.
+While combinatorial or linear programming (LP)-based methods only yielded a 1/2-approximation
+(e.g., the returned solution’s value is at least half of the optimal value) in polynomial time, the
+celebrated result of Goemans and Williamson [50] used a semidefinite programming (SDP) relaxation
+to obtain an approximation ratio of αGW := mina∈[−1,+1]
+arccos(a)/π
+(1−a)/2
+≈0.878, which was later proved
+to be optimal for all polynomial-time algorithms assuming the Unique Games Conjecture [62]. This
+tight relationship between algorithms, complexity, and SDPs was later extended to numerous other
+combinatorial optimization tasks, most notably all Constraint Satisfaction Problems (CSPs) [76].
+Given the importance of this result, it is natural to ask which additional assumptions allow
+polynomial-time algorithms to achieve an approximation ratio αGW + C for some constant C > 0.
+Structural properties of the input graph G = (V, E) have been the most popular assumptions, which
+19
+
+--- Page 20 ---
+include when G is dense (i.e., |E| = Ω(n2) [3]), G is bounded-degree [34, 55], or G has a certain
+expansion property [8].
+In order to motivate assumptions depending on the structure of SDP solutions, let us briefly
+recall Goemans-Williamson’s SDP relaxation. Given G = ({1, . . . , n}, E), their SDP relaxation, with
+a symmetric matrix M ∈Rn×n as the variable, is as follows:
+maximize
+X
+(i,j)∈E
+1 −Mi,j
+2
+subject to
+Mi,i = 1
+∀i ∈[n].
+M ⪰0.
+The fact that this SDP is a relaxation for Max-Cut (i.e., the SDP optimal value is at least the
+Max-Cut optimal value) is based on the fact that for any solution x : V →{±1} for Max-Cut,
+M = xxT is a feasible solution for the SDP. For the αGW -approximation, the algorithm is the
+following:
+1. Compute the optimal SDP solution M.
+2. Compute its Gram decomposition M = V V T for some V ∈Rn×d. Let vi be the ith row of V .
+3. Sample a random Gaussian vector g ∼N(0, Id).
+4. For each i ∈[n], let xi ←sgn(⟨vi, g⟩). (I.e., xi ←+1 if ⟨vi, g⟩≥0 and xi ←−1 otherwise.)
+The αGW -approximation can be proved by a simple edge-by-edge analysis where each edge (i, j)
+contributes 1−⟨vi,vj⟩
+2
+to the SDP objective, and arccos(⟨vi, vj⟩)/π to the Max-Cut objective in
+expectation (because it is the probability that sgn(vi, g) ̸= sgn(vj, g)).
+So, how about the structural properties of the optimal SDP solution M? Perhaps one of the
+most natural assumptions on M is its rank; the gist of the Max-Cut problem itself is to force the
+rank of M to be 1. Then the question is, if M is a feasible solution to the SDP with rank d, can we
+round M to a Max-Cut solution of value at least (αGW + C(d)) times the SDP value of M, where
+C(d) > 0 is a constant depending only on d?
+This is a natural question asked since the Goemans-Williamson algorithm, and Goemans gave a
+positive answer when d = 2. Avidor and Zwick [4] refined it and gave a positive answer for d = 3 as
+well, but to the best of my knowledge, even the case d = 4 is open. It is surprising, especially given
+that analogous questions have already been answered for more general Grothendieck problems [13, 14];
+however, they are not directly comparable, as the optimal ratios for Grothendieck problems are
+worse than αGW .
+While studying the recent result of Hsieh and Kothari [55], which simplifies and extends the
+result of Feige, Karpinski, and Langberg [34] for Max-Cut on bounded-degree graphs, I realized that
+their algorithmic framework could be applied to the bounded-dimension case as well, modulo one
+very natural geometric question, which is stated below.
+The rest of the section details how the model “solved it.” Now, there exists a polynomial-time
+algorithm that, given an SDP solution M of rank d, produces a Max-Cut solution whose value is at
+least (αGW + C(d)) times the value of M, for some C(d) > 0. But, before detailing the answer, let
+us mention that the answer is not completely satisfactory in the sense that it does not produce any
+explicit expression for C as a function of d; in contrast, when G’s degree is at most d, the best-known
+approximation ratio is (αGW + eΩ(
+1
+d2 log d)) [55].
+On the other hand, the proof is based on results from geometric analysis, including the compactness
+of a certain space of probability measures, which have not been used much in the design of
+20
+
+--- Page 21 ---
+approximation algorithms. Will it be among the first of many examples where such analytic tools
+are used in approximation algorithms (and inspire more “constructive proofs” with “more explicit
+bounds”)? In any case, this experience reinforces common beliefs that large language models can
+help researchers in areas where they are not experts.
+Geometric Question
+The original question I asked the model is depicted in Figure 4.
+Problem 4.1. Let v1, . . . , vn be unit vectors in Rd such that ⟨vi, vj⟩≥−β for every i ̸= j, where
+β = 0.9. Let g ∼N(0, Id), Xi = sgn(⟨g, vi⟩), and X = Pn
+i=1 Xi. Is it always true that |X| ≥εn
+with probability at least δ, for some ε > 0 and δ > 0 depending only on the dimension d?
+Figure 4: Original prompt for model
+Using the standard second-moment methods and the fact that E[Xi] = 0, the model reduced it
+to the following equivalent question about the variance of X, which is indeed the version one needs
+for the Max-Cut application.
+Problem 4.2. The variance of X is E[X2] = Pn
+i=1
+Pn
+j=1 h(⟨vi, vj⟩), where h(t) = 2
+π arcsin(t). Is
+E[X2] ≥C(d, β)n2 for some constant C(d, β) > 0?
+Due to space constraints, let me not fully elaborate on how a positive answer to Problem 4.2
+leads to an improved algorithm for Max-Cut in the bounded-dimension case. It is simple to check
+formally, because one can just replace Lemma 7 of [55] with the answer to Problem 4.2, and the
+rest of their (elegant) seven-page paper works as is. Intuitively, their algorithm, which is originally
+suggested by [34], performs the standard rounding algorithm mentioned above, followed by the
+natural local improvement step; if there is a way to flip the assignment to a vertex that strictly
+improves the value, execute it. (The actual algorithm implements it in a more conservative way.)
+In this context, Problem 4.2 seems natural, because from the perspective of a vertex v, the more
+variance its neighbors have, the bigger chance there is that the standard rounding algorithm (which
+already guarantees an αGW -approximation) made a wrong decision for v and the local improvement
+step further improves upon it by flipping v. In particular, the answer to Problem 4.2 is applied to
+the neighborhood of every vertex.
+First Response
+The response in this section is fully generated by the model, except for removing standard applications
+of second-order methods.
+Let µ = 1
+n
+Pn
+i=1 δvi be the empirical probability measure on the unit sphere Sd−1. The normalized
+variance is:
+Q(µ) = 1
+n2 E[X2] =
+ZZ
+Sd−1×Sd−1 h(⟨x, y⟩)dµ(x)dµ(y).
+The constraint on the vectors implies that the support Sµ of µ satisfies ⟨x, y⟩≥−β for all
+x, y ∈Sµ. Let Mβ(d) be the set of all probability measures on Sd−1 satisfying this support
+21
+
+--- Page 22 ---
+constraint. We define:
+C(d, β) =
+inf
+µ∈Mβ(d) Q(µ).
+Lemma 4.3. For finite d ≥1 and 0 ≤β < 1, C(d, β) > 0.
+Proof. We proceed in three steps:
+1. Compactness and Continuity:
+Since d is finite, Sd−1 is compact. The space of probability
+measures P(Sd−1) is compact in the weak topology. We show that Mβ(d) is a closed subset.
+Let µk ∈Mβ(d) converge weakly to µ.
+Let Sk and S be their respective supports. Let x, y ∈S. For any ε > 0, the balls B(x, ε/2) and
+B(y, ε/2) have positive measure under µ. By the Portmanteau theorem, for sufficiently large
+k, µk(B(x, ε/2)) > 0. Thus, there exist xk ∈Sk and yk ∈Sk such that ∥x −xk∥< ε/2 and
+∥y −yk∥< ε/2.
+We have ⟨xk, yk⟩≥−β. Also,
+|⟨x, y⟩−⟨xk, yk⟩| ≤∥x −xk∥∥y∥+ ∥xk∥∥y −yk∥< ε/2 + ε/2 = ε.
+Thus, ⟨x, y⟩≥⟨xk, yk⟩−ε ≥−β −ε. Since ε is arbitrary, ⟨x, y⟩≥−β. Therefore, µ ∈Mβ(d).
+Thus, Mβ(d) is compact.
+Since h(⟨x, y⟩) is continuous, Q(µ) is continuous in the weak topology. Therefore, the infimum
+C(d, β) is attained by some measure µ∗∈Mβ(d).
+2. Moment Expansion:
+The Taylor series of h(t) is h(t) = P
+m odd,m≥1 amtm, where am > 0
+for all odd m. Let Tm(µ) =
+R
+x⊗mdµ(x) be the m-th moment tensor. We can write:
+Q(µ) =
+X
+m odd
+am
+ZZ
+⟨x, y⟩mdµ(x)dµ(y) =
+X
+m odd
+am∥Tm(µ)∥2.
+3. Symmetry and Contradiction:
+Suppose C(d, β) = 0. Then Q(µ∗) = 0. Since am > 0,
+this implies Tm(µ∗) = 0 for all odd m. This means
+R
+P(x)dµ∗(x) = 0 for any odd polynomial
+P(x). By the Stone-Weierstrass theorem, odd polynomials are dense in the space of continuous
+odd functions on Sd−1 (in the uniform norm).
+Thus,
+R
+g(x)dµ∗(x) = 0 for any continuous odd function g. This implies that µ∗is a symmetric
+measure (i.e., µ∗(A) = µ∗(−A)).
+Let S∗be the support of µ∗. If µ∗is symmetric, S∗must be symmetric. (If x ∈S∗but −x /∈S∗,
+there is an open ball B(−x, r) such that µ∗(B(−x, r)) = 0. By symmetry, µ∗(B(x, r)) =
+µ∗(−B(−x, r)) = 0, contradicting x ∈S∗).
+Since S∗is non-empty and symmetric, there exists x ∈S∗such that −x ∈S∗. The support
+constraint requires ⟨x, −x⟩≥−β. But ⟨x, −x⟩= −∥x∥2 = −1. So −1 ≥−β or β ≥1. This
+contradicts the assumption β = 0.9 < 1.
+Therefore, C(d, β) > 0.
+This establishes that E[X2] ≥C(d, β)n2.
+22
+
+--- Page 23 ---
+Interactions
+The first response, though it looked like a natural and sound approach using geometric functional
+analysis, had some gaps in the proof and was not fully verifiable, partially due to my inexpertise on
+the topic. Two major hurdles were (1) the foundations of measure theory to establish the compactness
+of Mβ(d) and (2) working knowledge of spherical harmonics to see how Tm(µ∗) = 0 for all odd m
+implies
+R
+P(x)dµ∗(x) = 0 for any odd polynomial P(x). Note that (2) was somewhat expected as
+the previous results for d = 2, 3 [4] and Grothendieck problems [13, 14] used spherical harmonics
+and related Gegenbauer polynomials, but the use of (1), via relaxing n-point discrete measures to
+Mβ(d), is a type of an argument rarely used in the approximation algorithms literature. In order
+to formally understand it, one needs to review the foundations of measure theory. For example,
+what is the weak topology? How is the Stone-Weierstrass theorem formally applied here? How does
+R
+g(x)dµ∗(x) = 0 for every odd g imply µ∗is a symmetric measure?
+After several iterations of asking for the reference behind each nontrivial step and manually
+searching each reference and feeding it back to the model, it produced the output in the next section.
+Now it is understandable to me, whose only formal exposure to analysis was an undergraduate course
+almost twenty years ago.
+Second Response
+This response is fully generated by the model, except for (1) removing standard applications of
+second-order methods, (2) adding two footnotes further justifying some steps, and (3) minor cosmetic
+changes.
+Foundational Theorems
+We rely on the following established theorems, sourced externally
+(e.g., via Google Search, Wikipedia, or standard textbooks).
+External Result 1 (Stone-Weierstrass Theorem (Real Version)).
+Suppose X is a
+compact Hausdorff space and A is a subalgebra of C(X, R) which contains a non-zero constant
+function. Then A is dense in C(X, R) (under the uniform norm) if and only if it separates
+points.
+External Result 2 (Riesz Representation Theorem).
+Let Ωbe a compact Hausdorff
+space. The dual space C(Ω)∗is isomorphic to the space of finite regular signed measures on Ω.
+External Result 3 (Banach-Alaoglu Theorem).
+The closed unit ball of the dual space of
+a normed vector space is compact in the weak* topology.
+External Result 4 (Definition and Properties of Spherical Harmonics).
+1. (Definition): Spherical harmonics of degree k on Sd−1 are the restrictions to the sphere
+of homogeneous harmonic polynomials of degree k in Rd. Let Hk denote this space.
+2. (Completeness): The spaces Hk are mutually orthogonal in L2(Sd−1). The algebraic
+sum L∞
+k=0 Hk is dense in C(Sd−1) and L2(Sd−1).
+3. (Parity): A spherical harmonic Yk ∈Hk has parity (−1)k. That is, Yk(−x) = (−1)kYk(x)
+for x ∈Sd−1.
+External Result 5 (Addition Theorem for Spherical Harmonics).
+Let d ≥2 and
+λ = (d −2)/2. The Gegenbauer polynomial Cλ
+k (⟨x, y⟩) is a positive semi-definite kernel. The
+23
+
+--- Page 24 ---
+energy integral
+Ik(µ) =
+ZZ
+Cλ
+k (⟨x, y⟩)dµ(x)dµ(y)
+is non-negative. Ik(µ) = 0 if and only if µ is orthogonal to Hk.
+Energy Minimization Framework
+If d = 1, the constraint forces all vi to be identical, so
+|X| = n. Assume d ≥2. Let µn = 1
+n
+P δvi. The normalized variance is:
+F(µn) = E[X2]
+n2
+=
+ZZ
+K(⟨x, y⟩)dµn(x)dµn(y),
+where K(t) = 2
+π arcsin(t). Let M′
+β(Sd−1) be the set of probability measures µ on Sd−1 such that
+for any distinct x, y in the support Sµ, ⟨x, y⟩≥−β. We want to show C(d) = infµ∈M′
+β F(µ) > 0.
+Compactness and Continuity
+We consider M(Sd−1) with the weak-* topology. Sd−1 is a
+compact metric space.
+Lemma 4.4 (Compactness of M(Sd−1)). M(Sd−1) is compact in the weak-* topology.
+Proof. By External Results 2 and 3, M(Sd−1) is identified as a weak-* closed subset of the unit
+ball in C(Sd−1)∗, which is compact by Banach-Alaoglu.
+Lemma 4.5 (Portmanteau Lemma (Partial)). If µk →µ weakly in a metric space X, then for
+every open set G ⊂X, lim infk µk(G) ≥µ(G).
+Proof. Let G be open, F = Gc. Define the continuous function fm(x) = min(1, m · dist(x, F)).
+As m →∞, fm(x) ↗1G(x).
+lim inf
+k
+µk(G) ≥lim inf
+k
+Z
+fmdµk =
+Z
+fmdµ.
+By the Monotone Convergence Theorem, as m →∞, the RHS converges to µ(G).
+Lemma 4.6. M′
+β(Sd−1) is a closed subset of M(Sd−1) and thus compact.
+Proof. Let µk ∈M′
+β →µ.
+Suppose µ /∈M′
+β.
+There exist distinct x, y ∈Sµ such that
+⟨x, y⟩< −β. We find disjoint open balls Bx, By where the inner product remains < −β. Since
+x, y ∈Sµ, µ(Bx) > 0. By Lemma 4.5, lim infk µk(Bx) > 0. For large k, there exist xk, yk in the
+support of µk within Bx and By. Thus xk ̸= yk. As µk ∈M′
+β, ⟨xk, yk⟩≥−β. Contradiction.
+Lemma 4.7 (Product Convergence). If µk →µ weakly on a compact space X, then µk × µk →
+µ × µ weakly on X × X.
+Proof. Let H ∈C(X × X).
+By External Result 1, separable functions Happrox(x, y) =
+P fi(x)gi(y) are dense. For Happrox, the convergence holds by definition of µk →µ. The
+result extends to H by density.
+Lemma 4.8. F(µ) is continuous on M(Sd−1).
+Proof. H(x, y) = K(⟨x, y⟩) is continuous. If µk →µ, by Lemma 4.7, µk × µk →µ × µ. By
+definition of weak convergence, F(µk) →F(µ).
+Since F is continuous and M′
+β is compact, the infimum C(d) is attained.
+24
+
+--- Page 25 ---
+Strict Positivity via Harmonic Analysis
+We show C(d) > 0. Let λ = (d −2)/2. We write
+K(t) = P∞
+k=0 bkCλ
+k (t). The energy is F(µ) = P∞
+k=0 bkIk(µ). By External Result 5, Ik(µ) ≥0.
+Lemma 4.9 (Monomial Expansion Positivity). Let d ≥2 (so λ ≥0). The expansion of tn in
+the basis of Gegenbauer polynomials Cλ
+k (t) has strictly positive coefficients.
+Proof. Case λ > 0 (d > 2). The inversion formula is known to be:a
+tn = n!
+2n
+⌊n/2⌋
+X
+k=0
+(n −2k + λ)
+λ · k! · (λ + 1)n−k
+Cλ
+n−2k(t)
+where (a)m is the rising factorial. Since λ > 0, n −2k ≥0, and the factorials and Pochhammer
+symbols are positive, the coefficients are strictly positive.
+Case λ = 0 (d = 2). The basis are Chebyshev polynomials Tk(t). The inversion formula is:
+tn =
+1
+2n−1
+⌊n/2⌋
+X
+k=0
+n
+k
+
+εn−2kTn−2k(t)
+where εj is 1/2 if j = 0 and 1 if j > 0. The coefficients are positive.
+We analyze the coefficients bk for K(t) = 2
+π arcsin(t).
+1. Parity: K(t) is odd. Cλ
+k (t) has the parity of k. Thus, bk = 0 for even k.
+2. Positivity of bk: arcsin(t) = P cmt2m+1 with cm > 0. By Lemma 4.9, t2m+1 is a sum of
+Cλ
+2j+1(t) with strictly positive coefficients. Therefore, bk > 0 for all odd k.
+Suppose F(µ) = 0. Since bk > 0 (odd k) and Ik(µ) ≥0, we must have Ik(µ) = 0 for all odd k.
+By External Result 5, µ is orthogonal to Hk for all odd k.
+Lemma 4.10 (Parity of Polynomials and Spherical Harmonics). A polynomial P(x) restricted
+to Sd−1 is an odd function if and only if its expansion in the basis of spherical harmonics consists
+solely of spherical harmonics of odd degree.
+Proof. By External Result 4 (Completeness and Definition), the space of polynomials restricted
+to Sd−1 is the algebraic direct sum L Hk. Let P(x) = PN
+k=0 Yk(x), where Yk ∈Hk. By
+External Result 4 (Parity), Yk(−x) = (−1)kYk(x). So P(−x) = PN
+k=0(−1)kYk(x). If P is odd,
+P(−x) = −P(x). Then PN
+k=0((−1)k + 1)Yk(x) = 0. Since the spaces Hk are orthogonal, they
+are linearly independent. Thus ((−1)k + 1)Yk(x) = 0 for all k. If k is even, 2Yk(x) = 0, so
+Yk = 0. Thus, P(x) consists only of odd degree harmonics. The converse is immediate.
+We show F(µ) = 0 implies µ is symmetric (i.e.,
+R
+fdµ = 0 for any continuous odd function
+f). Let f be continuous and odd. By External Result 1, let polynomials Pn →f uniformly.
+The odd part Qn(x) = (Pn(x) −Pn(−x))/2 is an odd polynomial, and Qn →f uniformly. By
+Lemma 4.10, Qn is composed solely of spherical harmonics of odd degree. Since µ is orthogonal
+to these,
+R
+Qn(x)dµ(x) = 0. By uniform convergence,
+R
+f(x)dµ(x) = 0. Thus, µ is symmetric.b
+Now we use the constraint µ ∈M′
+β. Suppose C(d) = 0. The minimizer µ∗has F(µ∗) = 0, so µ∗
+is symmetric. Let S be the support of µ∗. Let x ∈S. Since µ∗is symmetric, −x ∈S. Since
+∥x∥= 1, x ̸= −x. By the definition of M′
+β, ⟨x, −x⟩≥−β. This means −1 ≥−β, or β ≥1.
+25
+
+--- Page 26 ---
+This contradicts β = 0.9. Therefore, C(d) > 0.
+aThe section author’s note: It can be proved by induction using the recurrence relation given in https:
+// en. wikipedia. org/ wiki/ Gegenbauer_ polynomials .
+bThe section author’s note: For the formal justification of this step, note that the pushforward A∗µ for the
+antipodal map A(x) = −x satisfies
+R
+fdµ =
+R
+fdA∗µ for every continuous f. As the Riesz Representation
+Theorem shows that µ is fully characterized by (
+R
+fdµ)f∈C(Sd−1), we can conclude that µ = A∗µ.
+26
+
+--- Page 27 ---
+4.2
+Computational Geometry: Steiner Trees
+Written by Karthik C. S.
+Problem Context
+The "Simplex is the Best for Graph Embeddings" conjecture states that among all graphs with m
+edges embedded into Euclidean space as characteristic vectors, the star graph configuration yields
+the minimum Steiner tree cost. Proving this is a key step towards establishing APX-hardness for
+high-dimensional Steiner Tree problems.
+AI Contribution
+The model’s involvement was decisive.
+• The Crucial Link: The model suggested an approach based on the Kirszbraun Extension
+Theorem, which guarantees the existence of Lipschitz-preserving extensions of maps between
+Hilbert spaces.
+• Overcoming "Elementary" Bias: Initially, the model dismissed this approach as "non-
+elementary". However, when the researcher clarified that an elementary proof was not required,
+the model successfully formalized the argument.
+• Formal Proof: The model constructed a mapping from any graph embedding to the star
+graph embedding and used Kirszbraun’s theorem to show that a Steiner tree for the former
+can be transformed into a valid tree for the latter without increasing cost.
+Technical Details: Steiner Trees and Graph Embeddings
+In the Euclidean Steiner Tree problem, we are given as input a set of points (called terminals) in the
+ℓ2-metric space, and the goal is to find the minimum-cost tree connecting them. Additional points
+from the space (called Steiner points) can be introduced as nodes in the solution.
+The seminal works of Arora [2] and Mitchell [70] provide a Polynomial Time Approximation
+Scheme (PTAS) for solving the Euclidean Steiner Tree problem in fixed dimensions. However, the
+problem remains poorly understood in higher dimensions (such as when the dimension is logarithmic
+in the number of terminals). Ruling out a PTAS for the problem in high dimensions is a notoriously
+long-standing open problem (for example, see Trevisan [87]).
+In [39], the authors proposed various conjectures related to Steiner trees in order to make progress
+on understanding the inapproximability of the high-dimensional Euclidean Steiner Tree problem.
+Assuming these, they could prove APX-hardness of the Euclidean Steiner Tree problem in dimensions
+polynomial in the input size.
+The simplest such conjecture, called the Simplex is the Best for Graph Embeddings Conjecture in
+[39], was a special case of the widely open generalized Gilbert-Pollak conjecture [49, 57, 28]. In this
+report, we detail the resolution of this conjecture by Gemini, including the process.
+First, we state the conjecture and provide the necessary context. Next, we describe our interaction
+with Gemini that led to its resolution. Finally, we present the proof produced by Gemini.
+Research Context
+A natural approach to prove the APX-hardness of the Euclidean Steiner Tree problem is via a
+reduction from the Vertex Cover problem on bounded degree graphs (for example, see [40]). A
+27
+
+--- Page 28 ---
+candidate reduction proposed in [39] is to embed a vertex cover instance graph G = (V, E) into R|V |
+by mapping each edge {u, v} ∈E to eu + ev, where eu is the standard basis vector with 1 in the
+coordinate indexed by u and 0 elsewhere. Thus, each edge is embedded as its characteristic vector.
+The embedding of the set of edges incident to a single node forms the vertices of a regular simplex
+of side length
+√
+2. The point configuration as a whole consists of the vertices of a regular simplicial
+complex (where we take the union of the simplices associated with each node).
+Proving that the above reduction is gap-preserving, by analyzing the completeness and soundness
+cases, requires proving the following conjecture:
+Conjecture 4.11 (Euclidean Steiner Tree for Regular Simplicial Complexes [39]). For all constants
+r ∈(0, 1) and α ∈(0, 1/r −1), there exist constants s, β > 0 and M ∈Z+ sufficiently large so that,
+for all m ≥M, given a regular, unit, simplicial complex on m vertices:
+1. Completeness: If the vertices can be partitioned into the vertices of at most rm unit regular
+simplices, then the point configuration of the m vertices admits a Euclidean Steiner tree of cost
+at most sm.
+2. Soundness: If the vertices cannot be partitioned into the vertices of fewer than (1 + α)rm unit
+regular simplices, then the point configuration of the m vertices does not admit a Euclidean
+Steiner tree of cost less than (1 + β)sm.
+As a first step toward proving the above conjecture, [39] proposed the following much simpler
+conjecture about Steiner ratios of specialized point-sets.
+Conjecture 4.12 (Simplex is the Best for Graph Embeddings [39]). Over all simple graphs with m
+edges, the embedding1 of the star graph on m edges has the minimum cost Steiner tree.
+Observe that restricted to connected graphs with the same number of edges, the minimum
+spanning tree costs are identical. Consequently, Conjecture 4.12 over connected graphs is equivalent
+to finding the point configuration with the minimum Steiner ratio. In [39], the authors verified the
+conjecture computationally up to m = 10 using the exact algorithm of Smith [85] and established
+the following structural property.
+Lemma 4.13 (Fleischmann et al. [39]). For any fixed m ≥1, the graph of size m whose embedding
+(as above) has the minimum cost Steiner tree has diameter at most 2.
+Methodology
+I requested David Woodruff to formulate a prompt to solve Conjecture 4.12 using the Google internal
+model, providing only the paper [39] as context.
+The model proposed two approaches but did not offer a conclusive answer. The second approach
+involved starting from an arbitrary graph G and applying local transformations that do not increase
+the optimal Steiner tree cost, eventually converging to the star graph. As we had already attempted
+this strategy, it offered no new insights.
+The first approach, however, was based on the Kirszbraun Extension Theorem [63, 88]. I must
+confess that while I was aware of various extension theorems from my work on the computation
+of fixed-points (see, for example, [44]), I had not immediately seen the connection to Steiner trees.
+To my frustration, instead of exploring this direction further, the model noted that the proof of
+1Here we allude to embedding each edge by its characteristic vector, as detailed in the aforementioned reduction
+from the Vertex Cover problem.
+28
+
+--- Page 29 ---
+Kirszbraun Extension Theorem is non-elementary, and concluded that this approach would not yield
+an elementary proof of Conjecture 4.12.
+As I was not seeking an elementary proof and indeed, had not requested one, this comment left
+me slightly frustrated, yet intrigued. Consequently, I decided to run my own experiments using
+Gemini Ultra (utilizing the standard “thinking” mode rather than “deep think”).
+Initially, I provided the exact prompt used for the internal model, but Gemini consistently
+declined to attempt the problem, insisting that it was an open problem that could not be solved.
+Next, I removed the paper from the context and provided only the problem statement along with
+the relevant definitions. At first, the model suggested a hand-waving argument; however, when I
+pointed out the parts that required formalization, it successfully provided them. It first derived the
+same lemma suggested by the internal model, though this time with a proof. As the proof remained
+somewhat informal, I provided Gemini with the summary of the internal model’s output and with its
+explanation of why it had abandoned the approach. At that point, Gemini successfully formalized
+the lemma using the Kirszbraun Extension Theorem (the tool it had been missing earlier).
+Through this process, I have learned about the power of the Kirszbraun Extension Theorem
+for Steiner tree computation and analysis. To the best of my knowledge, this is a new connection
+(yet one that feels very natural!). This discovery makes me more optimistic about the prospects of
+establishing the APX-hardness of computing the Euclidean Steiner Tree in high dimensions.
+Gemini’s Proof of Conjecture 4.12
+Theorem 4.14. Let f be an embedding of a graph into Euclidean space such that for any edge
+{u, v} ∈E(G), f({u, v}) = eu +ev, where {eu : u ∈V (G)} are standard basis vectors. Let Starm
+denote the star graph with m edges, and let G be any arbitrary graph with m edges. Let SMT(P)
+denote the length of the Euclidean Steiner Minimal Tree of a point set P. Then:
+SMT(f(Starm)) ≤SMT(f(G)).
+Proof. Let G = (VG, EG) be a graph with |EG| = m edges and |VG| = k vertices. The embedding
+f maps edges to points in Rk. Let PG = {x1, . . . , xm} ⊂Rk be the set of m points generated by
+the edges of G. Similarly, let Starm have vertex set VStar with |VStar| = m + 1. Its embedding
+lies in Rm+1. Let PStar = {y1, . . . , ym} ⊂Rm+1 be the corresponding point set generated by the
+edges of the star graph.
+The star graph edges share a center. For any distinct pair yi, yj ∈PStar, the distance is:
+∥yi −yj∥=
+√
+2.
+Thus, PStar forms the vertices of a regular simplex in Rm+1.
+For PG ⊂Rk, the distance between points depends on edge adjacency, where we have for
+adjacent edges that ∥xi −xj∥=
+√
+2 and for disjoint edges we have ∥xi −xj∥= 2. Thus,
+∀xi, xj ∈PG, i ̸= j : ∥xi −xj∥≥
+√
+2.
+We construct a bijection ϕ : PG →PStar. Let ϕ(xi) = yi for i = 1, . . . , m. We verify the Lipschitz
+condition for ϕ on the domain PG. Consider any xi, xj ∈PG:
+∥ϕ(xi) −ϕ(xj)∥= ∥yi −yj∥=
+√
+2 ≤∥xi −xj∥.
+The map ϕ is 1-Lipschitz on the set of terminal points PG.
+29
+
+--- Page 30 ---
+Let TG be the Euclidean Steiner Minimal Tree for PG. TG is a subset of the ambient space
+Rk. We must map this tree to the ambient space of the star graph, Rm+1. We now use the
+Kirszbraun Extension Theorem [63, 88] in the following formulation.
+Theorem 4.15 (Theorem 1.31 in [83]). Let H1 and H2 be Hilbert spaces. If U ⊂H1 and
+ϕ : U →H2 is a 1-Lipschitz map, there exists an extension Φ : H1 →H2 such that Φ|U = ϕ and
+Φ is 1-Lipschitz on all of H1.
+We apply this theorem with H1 = Rk and H2 = Rm+1. The extension Φ : Rk →Rm+1 satisfies:
+∥Φ(u) −Φ(v)∥≤∥u −v∥
+∀u, v ∈Rk.
+Let TG denote the Euclidean Steiner Minimal Tree for the point set PG. We treat TG as a graph
+defined by a set of vertices VT and a set of edges ET :
+• VT = PG ∪SG, where PG are the terminal points and SG are the Steiner points introduced
+to minimize the total length.
+• The total cost is the sum of the lengths of the edges:
+SMT(f(G)) = Length(TG) =
+X
+{u,v}∈ET
+∥u −v∥.
+We construct a candidate tree T ′ for the star graph configuration PStar by applying the extended
+map Φ to every vertex in VT . Let V ′
+T = {Φ(z) | z ∈VT }. Since Φ is an extension of ϕ, we have
+Φ(PG) = PStar. Thus, V ′
+T contains the required terminals PStar. For every edge {u, v} ∈ET , we
+form a corresponding edge {Φ(u), Φ(v)} in T ′. Since TG is connected, the image graph T ′ is
+also connected and spans PStar. Thus, T ′ is a valid Steiner tree for PStar.
+We now compare the lengths using the 1-Lipschitz property of Φ:
+Length(T ′) =
+X
+{u,v}∈ET
+∥Φ(u) −Φ(v)∥.
+Since ∥Φ(u) −Φ(v)∥≤∥u −v∥for every pair u, v:
+Length(T ′) ≤
+X
+{u,v}∈ET
+∥u −v∥= Length(TG).
+Finally, since SMT(PStar) is the infimum of lengths of all valid trees connecting PStar, it must be
+less than or equal to the length of our candidate tree T ′:
+SMT(PStar) ≤Length(T ′).
+Combining these inequalities:
+SMT(f(Starm)) = SMT(PStar) ≤Length(T ′) ≤Length(TG) = SMT(f(G)).
+30

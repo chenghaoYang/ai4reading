@@ -1,0 +1,218 @@
+--- Page 39 ---
+5
+Using an AI-integrated IDE to “vibe-code”
+In this section, we explore a different modality of interaction: embedding an LLM directly into a
+LaTeX integrated development environment (IDE). This setup allows the researcher to act as a
+high-level orchestrator while the AI autonomously drafts and refines technical proofs, effectively
+"vibe-coding" a research paper from scratch.
+5.1
+Search vs. Decision in SP
+2
+Written by Lance Fortnow.
+Problem Context
+The complexity class SP
+2 represents problems solvable by a game between two competing provers. A
+fundamental question is the relationship between the decision version (does a strategy exist?) and
+the search version (find the strategy). It was known that decision is in ZPPNP (Cai 2001), but the
+status of search was unclear.
+AI Contribution
+The researcher used an AI-powered IDE to write a paper on this topic from scratch.
+• "Vibe-Coding" a Paper: The researcher provided high-level prompts (e.g., "Plan a paper
+showing finding an SP
+2 witness is equivalent to TFNPNP").
+• Autonomous Proof Discovery: The AI independently generated the proof of the main
+equivalence.
+• Self-Correction: When the AI made an incorrect assumption in a corollary (assuming a
+containment that is open), the researcher pointed it out, and the AI immediately corrected the
+proof to use a reduction instead.
+Experiment Narrative
+The story starts with a talk by Purdue philosophy of science professor Eamon Duede [29]. Duede
+argued that if artificial intelligence makes writing papers much easier, researchers will publish less
+important research results. He worried about an explosion of AI-generated mediocre research papers,
+but I saw the chance to get research out there that wouldn’t be there otherwise. AI itself can help
+sort through the papers.
+But how about the premise itself, can AI simplify writing a quality paper, especially one that
+has a result that might not have otherwise been published? So I picked one of my theorems that I
+never wrote up and decided to try it out myself.
+In short, the process worked even better than I expected. I created the paper [41] with eight
+prompts, not counting requests to compile. Surprisingly, it came up with the proof of the main
+result on its own though it did assume something it shouldn’t have for the corollary, which went
+away when I pointed it out.
+I give the detailed discussions below followed by a few lessons. At the end, I give an informal
+description of the paper itself for those so inclined.
+39
+
+--- Page 40 ---
+Details of the Process
+I used Google Antigravity, an AI integrated development environment, with Gemini 3 Pro as the AI
+model. I had successfully used Antigravity to fix some old links on my blog, so why not try it for
+this paper? I used an IDE instead of a chatbot as I see LATEX as code that produces a paper.
+Below is a transcript between myself and Antigravity, lightly edited for clarity. The plan.md
+and paper.tex files mentioned below are available in a GitHub repository [42].
+Let’s plan a paper showing that finding a SP
+2 witness is equivalent to TFNPNP. The paper’s
+author is Lance Fortnow (me) and should be written in my style.
+I’ve drafted a plan for the paper, outlining the argument that finding an SP
+2 witness is
+equivalent to TFNPNP. The plan is saved in plan.md.
+The core argument rests on two directions:
+1. SP
+2 -Search ∈TFNPNP: This is the straightforward direction. Verifying a witness
+(strategy) requires checking a universal quantifier (∀z P(x, y, z)), which is a coNP
+query. Since SP
+2 guarantees a witness always exists, the problem is total.
+2. TFNPNP ⊆SP
+2 -Search: This is the main technical contribution. We need to show
+that any total search problem with an NP-oracle verifier can be reduced to the game-
+theoretic setting of SP
+2 . This likely involves encoding the PNP verification circuit into
+the symmetric alternation structure.
+Next Steps
+• Review the Plan: Does the structure in plan.md look right to you?
+• Start the Draft: I can initialize a paper.tex file with this structure and your standard
+preamble.
+• Flesh out the Proofs: We can start sketching the reduction for the hard direction
+(TFNPNP ⊆SP
+2 -Search) in more detail.
+Not a bad start and it has the right ideas for the proof. But it doesn’t mention Cai’s work or the
+search versus decision angle.
+40
+
+--- Page 41 ---
+Don’t forget to cite Cai’s paper that SP
+2 is in ZPPNP. Add as a corollary that reducing
+search to decision for SP
+2 would put ΣP
+2 ∩ΠP
+2 in ZPPNP.
+I’ve updated the plan to include the corollary and the citation for Jin-Yi Cai’s paper.
+Updates
+• Section 4: Added the corollary: “If search reduces to decision for SP
+2 , then ΣP
+2 ∩ΠP
+2 ⊆
+ZPPNP.”
+• References: Added “Cai, J.-Y. (2001). SP
+2 ⊆ZPPNP.”
+The plan is now updated in plan.md. Ready to proceed with drafting the content whenever
+you are.
+Mention the corollary in the abstract, and note the stark difference between search and
+decision.
+I’ve updated the abstract in plan.md to include the corollary and emphasize the stark
+difference between the search and decision complexities of SP
+2 , specifically referencing Cai’s
+result. The plan is now fully updated with your requirements. Would you like to proceed
+with creating the LaTeX file for the paper?
+Proceed.
+I’ve created the paper.tex file with the content we discussed. It includes the abstract,
+introduction, preliminaries, the equivalence proof sketch, the corollary regarding search-to-
+decision, and the references. You can now compile this LaTeX file to generate the PDF.
+Would you like me to try and compile it for you (if a LaTeX environment is available), or is
+there anything else you’d like to add to the paper first?
+I had expected to have to walk through the proof with the IDE, but it came up with the proof
+on its own. That surprised me. It isn’t a technically difficult theorem but it has never been written
+up before. But there was a mistaken assumption in the corollary.
+41
+
+--- Page 42 ---
+It’s open whether ΣP
+2 ∩ΠP
+2 ⊆SP
+2 . The point is that ΣP
+2 ∩ΠP
+2 can be reduced to TFNPNP.
+I’ve corrected the proof in paper.tex. It now correctly states that the search problem
+for ΣP
+2 ∩ΠP
+2 is in TFNPNP, which (via our main result) connects it to SP
+2 -Search and
+subsequently ZPPNP. Is there anything else you’d like to refine in the paper?
+That’s all it took to fix the proof of the corollary. Still Gemini got a little lazy in the write up.
+Avoid statements like “it is known” and put in details instead.
+I’ve expanded the proof in paper.tex to explicitly detail why the search problem for ΣP
+2 ∩ΠP
+2
+falls into TFNPNP, replacing the “it is known” statement. The proof now walks through the
+definitions of membership in ΣP
+2 and ΠP
+2 , the existence of witnesses for either case, and the
+verification complexity using an NP oracle. Is there anything else you’d like to modify or
+add?
+Similarly give the details of predicate Q.
+I’ve updated the paper with the detailed construction of the predicate Q and the logic for
+the reduction. This should make the proof much more rigorous.
+The paper now contains:
+1. Equivalence of SP
+2 -Search and TFNPNP.
+2. Detailed reduction construction.
+3. Corollary connecting search-to-decision for SP
+2 with ΣP
+2 ∩ΠP
+2 ⊆ZPPNP.
+4. Corrected proof for the corollary.
+Is there anything else you’d like to refine?
+The paper at this point was pretty well written but I wanted to change the emphasis to search
+versus decision.
+42
+
+--- Page 43 ---
+Change the title to “Search versus Decision for SP
+2 ” and adjust the abstract and introduction
+appropriately.
+I have read paper.tex and understood the necessary changes. Now I am creating the
+implementation plan. I have created an implementation plan to update the paper’s title,
+abstract, and introduction. Please review it. I have verified the changes in paper.tex.
+The title, abstract, and introduction have been correctly updated. Now I am creating
+the walkthrough artifact. I have updated the paper’s title, abstract, and introduction as
+requested. You can review the changes in paper.tex.
+I had been using a separate LATEX editor to compile paper. Maybe I didn’t need to.
+Can you convert the tex file to pdf?
+I have successfully compiled paper.tex to paper.pdf. You can find the output at paper.pdf.
+The citations weren’t going to the latest journal versions.
+Check Google Scholar that we have the latest versions of the papers in the citation.
+I have checked the citations on Google Scholar. I found updated journal versions for Canetti
+(IPL 1996) and Cai (JCSS 2007). Russell–Sundaram (1998) and Megiddo–Papadimitriou
+(1991) are already correct. I found updated journal versions for Canetti and Cai. I have
+created a plan to update the citations. Please review it. I have verified the updated citations
+in paper.tex. They are correct. I have updated the citations for Canetti and Cai to their
+journal versions and recompiled the paper. You can check paper.pdf for the latest version.
+Finally I should come clean that I had AI write this paper.
+43
+
+--- Page 44 ---
+Add an acknowledgment section: “While the results are fully due to the author, this paper
+was generated using the large language model Gemini 3 Pro with prompting from the author.
+The author takes full responsibility for its contents.”
+I have added the acknowledgment section and recompiled the paper. You can check paper.pdf
+for the final version.
+And that’s how I "vibe-coded" a research paper in eight prompts, not counting the two used to
+compile. I did some light editing afterwards to get it ready for the arXiv submission but I didn’t
+need to.
+Lessons
+I did this as an experiment on a result that may never have seen the light of day otherwise, and
+I was fully open about how I had AI write the paper. Nevertheless, it felt wrong, like I cheated
+somehow. I felt a similar way when I first used LATEX in the 1980s, a paper that looked far better
+than it deserved. After that all papers looked the same, and maybe with AI all papers will read the
+same.
+The experience felt similar to working with a graduate student writing their first research paper.
+I would just make suggestions until they got it right.
+In AI coding you can get better behavior when you give detailed instructions using markdown
+files like the plan.md that Gemini created for me. I could have taken the approach by creating
+a markdown file myself, instead of having AI create one for me. I could have a separate file that
+describes how I personally like papers written. This might lead to a system where you write
+mathematical papers in LATEX without ever looking at the LATEX produced and the markdown files
+become the true paper source.
+Is low-friction research paper writing good for science? It’s a question that philosophers like
+Duede contemplate. But I see no one suggesting we go back to quill and scroll.
+Informal Theorem Description
+The complexity class SP
+2 [17, 77] can be thought of as an exponential-sized 0-1 matrix with the
+promise that either (a) there is a row of all ones or (b) a column of all zeros (you can’t have both).
+The decision problem for SP
+2 is to tell whether (a) or (b) holds, and the search problem is to find the
+appropriate row or column. An NP oracle is an extra capability to ask about existential questions,
+like does a specified row have a zero. Jin-Yi Cai [16] showed that the decision problem can be solved
+by a randomized algorithm with access to an NP oracle. But his proof did not necessarily find
+the row or column. The new result shows that the search problem is equivalent to a likely harder
+problem, total search problems verifiable with access to an NP oracle, a class called TFNPNP.
+44

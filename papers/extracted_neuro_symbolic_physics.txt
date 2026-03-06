@@ -1,0 +1,412 @@
+--- Page 45 ---
+6
+Autonomous Verification and Neuro-Symbolic Loops
+Standard text-based chat interfaces are fundamentally limited by the AI’s tendency to hallucinate
+during long symbolic derivations. This section highlights a methodological leap: embedding the AI in
+an automated "neuro-symbolic" loop where it autonomously writes and executes code to numerically
+verify its own mathematical hypotheses, effectively pruning its own invalid reasoning branches.
+6.1
+Physics: Cosmic String Spectra
+Written by Michael P. Brenner, Vincent Cohen-Addad, and David P. Woodruff.
+Problem Context
+Predicting the gravitational radiation emitted by cosmic strings requires solving a specific,
+notoriously difficult integral over the sphere. Cosmic strings are hypothetical one-dimensional
+topological defects that may have formed during symmetry-breaking phase transitions in the early
+universe. The study of these strings as sources of gravitational radiation has seen renewed interest
+following recent observations of a stochastic gravitational wave background by Pulsar Timing Arrays.
+A critical quantity in predicting this radiation is the power spectrum PN of the N-th harmonic
+emitted by a cosmic string loop. For the well-studied class of Garfinkle-Vachaspati strings, the
+power emitted at frequency ωN = 4πN/L (where L is the loop length) is governed by a core integral
+I(N, α) evaluated over the unit sphere S2:
+PN = 32Gµ2
+π3N2 I(N, α)
+(4)
+where µ is the mass per unit length. The core integral I(N, α) is defined as:
+I(N, α) =
+Z
+S2 dΩ[1 −(−1)N cos(Nπe1)][1 −(−1)N cos(Nπe2)]
+(1 −e2
+1)(1 −e2
+2)
+(5)
+where e1 = ˆr · ˆa and e2 = ˆr · ˆb are projection factors. The vectors ˆa and ˆb are three-dimensional unit
+vectors characterizing the string trajectory, and the problem is defined entirely by the loop opening
+angle α between them.
+Evaluating this integral has been a persistent roadblock in theoretical astrophysics. The integrand
+features severe singularities at the poles (e1,2 = ±1). Furthermore, as N grows large, the integrand
+in angular coordinates becomes highly oscillatory—so spiky that it resembles a sea urchin—rendering
+standard numerical integration grids highly unstable and computationally prohibitive. Analytical ex-
+pansions (e.g., using standard Legendre polynomials) are exceedingly difficult due to the non-matching
+weight functions (1 −e2)−1 in the denominator. Previous human and AI-assisted efforts yielded
+only partial solutions for odd N or asymptotic approximations for large N. Finding a unified, ex-
+act, closed-form analytical solution for arbitrary loop geometries remained a significant open problem.
+AI Contribution
+To tackle this integral, we deployed a hybrid neuro-symbolic system combining the Gemini Deep
+Think reasoning engine with a systematic Tree Search (TS) algorithm. This interaction highlighted
+three remarkable capabilities of modern AI as an active research partner:
+• Automated Pruning and Grounded Verification: To bridge the gap between symbolic
+mathematical manipulation and ground-truth verification, we utilized an automated numerical
+feedback loop.
+At each node in the search space, the model proposed an intermediate
+45
+
+--- Page 46 ---
+mathematical expression in LATEX and autonomously generated an executable Python function
+to evaluate it. The TS algorithm scored the node against a high-precision numerical baseline.
+If the proposed expression exhibited numerical instability (e.g., catastrophic cancellation) or
+divergence, the evaluation harness caught the exception and injected the Python traceback
+directly back into Gemini’s context window.
+This successfully pruned over 80% of the
+approximately 600 candidate branches early, keeping the LLM strictly grounded in mathematical
+reality.
+• Methodological Diversity via Negative Prompting: The system was highly adept at
+finding alternative mathematical routes. Once the model successfully found a valid solution
+path, we utilized negative prompting to force broader methodological exploration. By explicitly
+instructing the model, “One way of solving this problem is to use the following method... DO
+NOT use this method. Reflect on your plan and try a different plan,” the AI autonomously
+discovered six distinct analytical methods to solve the integral.
+• Hierarchical Refinement and Self-Correction: The most profound moment came during
+the final verification stage. The TS framework initially produced an exact solution for our
+preferred method (Method 6) expressed as an infinite tail sum of coefficients. We then passed
+this intermediate result to a larger, unconstrained version of Gemini Deep Think, asking it
+to rigorously verify the proofs and search for further simplifications. This advanced model
+independently spotted an algebraic oversight in a related recurrence (Method 5, where a
+denominator dependency had been missed). By correcting this, it established a mathematical
+equivalence between the two methods, and brilliantly recognized that a localized recurrence
+structure allowed the infinite tail sum to telescope into a finite, closed-form expression.
+Technical Details: The AI’s Discovery Process
+To demonstrate the depth of the AI’s mathematical exploration, we detail the progression of the
+six methods it discovered. The AI first recast the integral into the following general form over the
+unit sphere S2:
+I(N, α) =
+Z
+S2 dΩ(u) fN(u · z) fN(u · a)
+(6)
+where z and a are unit vectors with z · a = cos α. The function fN(t) is defined as:
+fN(t) = 1 −(−1)N cos(Nπt)
+1 −t2
+,
+t ∈[−1, 1].
+(7)
+For convergence at the poles t = ±1, N must be an integer, and we define A = Nπ.
+Class I: Monomial Basis Approaches (The Unstable Solutions)
+The AI first explored expanding fN(t) in a Taylor series monomial basis {t2k}. It found the
+coefficients d2k by expanding the right-hand side using the cosine power series:
+(1 −t2)
+∞
+X
+k=0
+d2kt2k = 1 −(−1)N
+∞
+X
+m=0
+(−1)m(At)2m
+(2m)!
+.
+(8)
+Matching coefficients of t2k yields the recurrence d2k −d2k−2 = −(−1)N (−1)kA2k
+(2k)!
+, implying:
+d2k = −(−1)N
+k
+X
+j=1
+(−1)jA2j
+(2j)!
++ (1 −(−1)N).
+(9)
+46
+
+--- Page 47 ---
+Substituting this expansion into the integral yields a double sum:
+I(N, α) =
+∞
+X
+k=0
+∞
+X
+j=0
+d2kd2jJ2k,2j(α)
+where
+Jk,l(α) =
+Z
+S2(u · z)k(u · a)ldΩ.
+(10)
+To evaluate the angular moments Jk,l(α), the AI discovered three separate sub-methods:
+Method 1: Generating Function Approach. The AI defined a generating function G(λ, µ) =
+R
+S2 eλu·z+µu·adΩ. Letting K = λz + µa and aligning the polar axis with K, the AI integrated to find:
+G(λ, µ) = 2πeK −e−K
+K
+= 4πsinh K
+K
+,
+(11)
+where K2 = λ2 + µ2 + 2λµ cos α. The AI then expanded sinh K/K:
+sinh K
+K
+=
+∞
+X
+s=0
+K2s
+(2s + 1)! =
+∞
+X
+s=0
+(λ2 + µ2 + 2λµ cos α)s
+(2s + 1)!
+.
+(12)
+This allowed the AI to compute J2k,2j via differentiation
+h
+∂2k
+λ ∂2j
+µ G
+i
+λ=µ=0, resulting in an explicit
+sum involving factorials and powers of cos α.
+Method 2: Gaussian Integral Lifting. Alternatively, the AI lifted the basic equation into R3
+by introducing a Gaussian weight:
+M =
+Z
+R3 e−r2(r · z)2k(r · a)2jd3r.
+(13)
+By switching to spherical coordinates r = ru, the radial integral separates and evaluates to
+1
+2Γ(k + j + 3/2), implying M = 1
+2Γ(k + j + 3/2)J2k,2j. Simultaneously, applying the differential
+operator identity (r · z)2k = ∂2k
+λ |λ=0eλr·z directly to the standard Gaussian integral allowed the AI
+to evaluate M analytically:
+M = π3/2∂2k
+λ ∂2j
+µ
+
+λ=µ=0
+exp
+λ2 + µ2 + 2λµ cos α
+4
+
+.
+(14)
+Equating the two representations of M isolates J2k,2j.
+Method 3: Hybrid Coordinate Transformation. The AI’s third approach projected the
+power series onto a Legendre basis P2m(t), expanding t2k = Pk
+m=0 Tk,mP2m(t), where Tk,m are
+known analytical coefficients. Substituting this back into the Taylor expansion yielded fN(t) =
+P∞
+m=0 (P∞
+k=m d2kTk,m) P2m(t).
+AI Self-Correction: While mathematically correct, the AI’s automated Python verification
+routines revealed that all three Monomial methods were highly unstable. The calculation of the
+Taylor coefficients d2k involves alternating sums of massive numbers. For large N, this triggers
+catastrophic O(eNπ) cancellation, rendering the methods computationally intractable without
+arbitrary-precision libraries. Recognizing this, the AI autonomously pivoted to Spectral methods.
+Class II: Spectral Basis Approaches (The Pivot to Stability)
+The AI recognized that because I(N, α) is a spherical self-convolution, expanding fN(t) =
+P C2jP2j(t) (where P are standard Legendre polynomials) allows the direct application of the
+Funk-Hecke Convolution Theorem to diagonalize the integral:
+I(N, α) = 4π
+∞
+X
+j=0
+C2
+2j
+4j + 1P2j(cos α).
+(15)
+47
+
+--- Page 48 ---
+The problem now reduced to finding the Legendre coefficients C2j efficiently without relying on the
+unstable Taylor series. The AI found two stable O(N) methods to do this:
+Method 4: Spectral Galerkin (Matrix Method). The AI formulated a linear system by
+defining g(t) = (1 −t2)fN(t) = 1 −(−1)N cos(At). Substituting fN = P
+j C2jP2j and projecting
+onto a test function P2i yielded:
+X
+j
+C2j
+Z 1
+−1
+(1 −t2)P2i(t)P2j(t)dt =
+Z 1
+−1
+P2i(t)g(t)dt.
+(16)
+This forms a matrix equation GC = b. Using the recurrence identity t2Pl = AlPl+2 + BlPl + ClPl−2,
+the AI deduced an explicit formula for the matrix elements Gij and proved that G is a symmetric
+positive-definite tridiagonal matrix. The RHS vector b was evaluated using the Bauer plane wave
+expansion to yield bi = 2δi0 −2(−1)N+ij2i(A), allowing the coefficients to be solved with high
+stability.
+Method 5: Spectral Volterra (Recurrence Method). Pushing further, the AI derived a
+forward recurrence for C2j. Starting from Cl = 2l+1
+2
+R 1
+−1 fN(t)Pl(t)dt = 2l+1
+2 γl, the AI multiplied the
+Legendre differential equation by fN(t) and integrated by parts:
+l(l + 1)γl =
+Z 1
+−1
+f′
+N(t)(1 −t2)P ′
+l (t) dt.
+(17)
+Differentiating (1 −t2)fN(t) = 1 −(−1)N cos(At) gives (1 −t2)f′
+N(t) = (−1)NA sin(At) + 2tfN(t).
+Substituting this back into the integral brilliantly split the result into two tractable terms, T1(l) and
+T2(l):
+l(l + 1)γl =
+Z 1
+−1
+(−1)NA sin(At)P ′
+l (t)dt
+|
+{z
+}
+T1(l)
++
+Z 1
+−1
+2tfN(t)P ′
+l (t)dt
+|
+{z
+}
+T2(l)
+.
+(18)
+The AI evaluated T1(2j) via spherical Bessel functions as −2A2(−1)N+jj2j(A). It expanded T2(2j)
+into a telescoping sum structure, yielding a clean O(N) forward recurrence:
+4(2j2 −j)
+4j + 1
+C2j = T1(2j) + SR(j),
+(19)
+where SR(j) = Pj−1
+m=0(8m + 2)γ2m is a running sum of lower-order coefficients.
+Class III: The Exact Analytic Solution (Method 6)
+While Methods 4 and 5 provided stable algorithmic resolutions, the crowning achievement was
+finding an exact analytic closed-form solution via the Gegenbauer Method.
+The AI insightfully chose to expand fN(t) not in standard Legendre polynomials, but in the
+basis of Gegenbauer polynomials C(3/2)
+2m
+(t):
+fN(t) =
+∞
+X
+m=0
+b2mC(3/2)
+2m
+(t).
+(20)
+It realized that Gegenbauer polynomials are orthogonal with respect to the specific weight w(t) = 1−t2.
+This specific weight miraculously cancels the problematic singular denominator in fN(t) when
+determining the coefficients by orthogonality:
+b2m =
+1
+h2m
+Z 1
+−1
+1 −(−1)N cos(Nπt)
+1 −t2
+
+|
+{z
+}
+fN(t)
+C(3/2)
+2m
+(t) (1 −t2)
+| {z }
+weight
+dt,
+(21)
+48
+
+--- Page 49 ---
+where h2m is the standard normalization constant. By using the identity C(3/2)
+k
+(t) = P ′
+k+1(t) and
+integrating by parts, the boundary terms vanish (because the numerator 1−(−1)N cos(Nπt) evaluates
+to 0 at t = ±1), and the integral elegantly reduces to the Fourier transform of Legendre polynomials:
+b2m = −A(−1)N+mj2m+1(A)
+4m + 3
+(2m + 1)(2m + 2).
+(22)
+The AI then related the desired Legendre coefficients C2j (from Equation 15) to these Gegenbauer
+coefficients b2m via a tail sum, noting a critical property: when j = 0, the sum of all Gegenbauer
+coefficients simply equals C0:
+C0 =
+∞
+X
+m=0
+b2m.
+(23)
+Finally, during the hierarchical refinement phase, the advanced Gemini model exploited a partial
+fraction decomposition of
+1
+1−t2 = 1
+2
+
+1
+1−t +
+1
+1+t
+
+to telescope the series and find an exact analytical
+expression for C0:
+C0 = 1
+2
+Z 1
+−1
+1 −(−1)N cos(Nπt)
+1 −t2
+dt = 1
+2
+Z 2Nπ
+0
+1 −cos(x)
+x
+dx.
+(24)
+Recognizing this final integral as the standard definition of the generalized cosine integral function
+Cin(z) ≡
+R z
+0
+1−cos(t)
+t
+dt, the AI produced the final, exact closed-form solution:
+C0 = 1
+2Cin(2Nπ).
+(25)
+Summary of Discovered Methods
+The table below summarizes the AI’s discoveries and their computational tradeoffs. This AI-
+driven breakthrough provided a completely stable, closed-form analytic solution for the spectral
+coefficients. It resolves a long-standing roadblock in cosmic string radiation physics, entirely avoiding
+the need for matrix inversion or computationally expensive recurrence relations, and flawlessly
+matches high-precision numerical benchmarks across all parameters.
+Method
+Core Technique
+Complexity
+Numerical Stability
+1, 2, 3
+Monomial Expansions
+O(N 2)
+Unstable (Catastrophic Cancellation)
+4
+Spectral Galerkin Matrix
+O(N)
+Stable (Tridiagonal SPD Matrix)
+5
+Spectral Volterra Recurrence
+O(N)
+Stable (Forward Step Recurrence)
+6
+Gegenbauer Expansion
+O(1)
+Stable (Exact Analytic Closed-Form)
+Table 2: Comparison of AI-discovered methods for evaluating the cosmic string radiation integral
+I(N, α).
+49

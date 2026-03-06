@@ -19,6 +19,21 @@ Use `/reading-list add <arxiv_id>` to add papers here.
 
 ---
 
+## Think Deep, Not Just Long: Measuring LLM Reasoning Effort via Deep-Thinking Tokens
+- **ArXiv**: 2602.13517 | https://arxiv.org/abs/2602.13517
+- **Authors**: Wei-Lin Chen, Liqian Peng, Tian Tan, Chao Zhao, Blake JianHang Chen, Ziqian Lin, Alec Go, Yu Meng (8 authors)
+- **Status**: ✅ Done
+- **Categories**: cs.CL
+- **Conference**: Work in progress
+- **Added**: 2026-03-05
+- **Completed**: 2026-03-05
+- **Soundness**: ⭐⭐⭐⭐ /5
+- **Key Results**: DTR 与准确率 Pearson 相关均值 +0.683（最优），远超 token 长度 -0.594；Think@n (η=50%) 达到或超越 self-consistency 同时大幅降低推理成本
+- **Key Examples**: AIME 2025 圆几何题：正确答案 DTR=19.0%/3725 tokens，错误答案 DTR=13.9%/27724 tokens，7.4倍 token 差异
+- **Notes**: DTR=深层token收敛比例，比长度更能预测推理准确率；Think@n=DTR过滤+投票，η=50%最优；JS散度优于KL/余弦作为距离度量
+
+---
+
 ## Geometric-Mean Policy Optimization
 - **ArXiv**: 2507.20673 | https://arxiv.org/abs/2507.20673
 - **Authors**: Yuzhong Zhao, Yue Liu, Junpeng Liu, Furu Wei et al. (12 authors, Microsoft Research affiliates)

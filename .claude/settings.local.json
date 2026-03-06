@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 scripts/fetch_paper.py --id \"2602.03837v1\")",
+      "Bash(echo \"EXIT: $?\")"
+    ]
+  }
+}
