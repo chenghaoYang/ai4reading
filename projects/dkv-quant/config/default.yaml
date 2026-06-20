@@ -1,0 +1,41 @@
+# Default experiment configuration for dKV-Quant.
+# Used by the GPU eval; the no-GPU scripts take the same fields via CLI flags.
+
+experiment:
+  name: dkv_quant_main
+  seed: 0
+
+model:
+  hf_id: GSAI-ML/LLaDA-8B-Instruct
+  trust_remote_code: true
+
+# Diffusion decoding schedule (LLaDA defaults; steps ~= gen_len for best quality)
+decoding:
+  gen_len: 256
+  block_size: 32
+  steps: 256
+  temperature: 0.0
+  remasking: low_confidence       # low_confidence | random
+  cache: fast_dllm                # reuse policy: none | fast_dllm | dllm_cache | dpad
+
+# KV-cache quantization
+quant:
+  method: dkv_step_aware          # see baselines.default_methods for the full set
+  bits: 4
+  granularity: per_group
+  group_size: 128
+  symmetric: false
+  hadamard: false
+  momentum: 0.5                   # step-aware EMA: 0=fresh-every-step, 1=frozen-AR
+
+# Methods to sweep in the main comparison table
+sweep:
+  methods: [fp16, ar_static, ar_static_hadamard, fresh_per_step,
+            dkv_step_aware, dkv_step_aware_hadamard]
+  bits: [2, 3, 4, 8]
+
+eval:
+  benchmarks: [gsm8k, humaneval, mbpp, mmlu, bbh]
+  max_samples: null               # null = full set
+  report: [accuracy, throughput_tok_s, tokens_per_nfe, peak_mem_gb,
+           kv_cache_bits, compression_ratio, aup]

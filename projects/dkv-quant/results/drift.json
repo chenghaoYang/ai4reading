@@ -1,0 +1,56 @@
+{
+  "config": {
+    "vocab": 256,
+    "d_model": 128,
+    "heads": 8,
+    "layers": 4,
+    "gen_len": 32,
+    "block_size": 8,
+    "steps_per_block": 8,
+    "prompt_len": 8,
+    "outlier_frac": 0.05,
+    "seed": 0,
+    "out": "results/drift.json"
+  },
+  "per_layer": {
+    "layer_0": {
+      "n_steps": 24,
+      "k_tensor_drift_mean": 0.1832827506035907,
+      "v_tensor_drift_mean": 0.16480418381659973,
+      "k_scale_drift_mean": 0.01681828568429043,
+      "v_scale_drift_mean": 0.016423229356529574,
+      "outlier_churn_mean": 0.06521739130434782
+    },
+    "layer_1": {
+      "n_steps": 24,
+      "k_tensor_drift_mean": 0.15063098689373386,
+      "v_tensor_drift_mean": 0.15069172514663065,
+      "k_scale_drift_mean": 0.045281966436466196,
+      "v_scale_drift_mean": 0.03998276340020417,
+      "outlier_churn_mean": 0.21739130434782608
+    },
+    "layer_2": {
+      "n_steps": 24,
+      "k_tensor_drift_mean": 0.13351136483862572,
+      "v_tensor_drift_mean": 0.13931282984872959,
+      "k_scale_drift_mean": 0.04258315328148512,
+      "v_scale_drift_mean": 0.04825998625140486,
+      "outlier_churn_mean": 0.17391304347826086
+    },
+    "layer_3": {
+      "n_steps": 24,
+      "k_tensor_drift_mean": 0.13618547478138265,
+      "v_tensor_drift_mean": 0.12664287495091364,
+      "k_scale_drift_mean": 0.04056118701021426,
+      "v_scale_drift_mean": 0.03928339212243504,
+      "outlier_churn_mean": 0.06521739130434782
+    }
+  },
+  "aggregate": {
+    "k_tensor_drift_mean": 0.15090264427933323,
+    "v_tensor_drift_mean": 0.1453629034407184,
+    "k_scale_drift_mean": 0.036311148103114005,
+    "v_scale_drift_mean": 0.035987342782643414,
+    "outlier_churn_mean": 0.13043478260869565
+  }
+}

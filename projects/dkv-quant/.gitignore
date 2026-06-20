@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+# Keep results/ and figures/ tracked (the .gitkeep + committed json outputs),
+# but ignore large model/data artifacts pulled during the GPU phase.
+*.safetensors
+*.bin
+*.pt
+data_cache/

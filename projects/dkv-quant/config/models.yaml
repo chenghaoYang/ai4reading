@@ -1,0 +1,58 @@
+# Open diffusion-LLM checkpoints for the GPU phase.
+# Verified HF ids + licenses (see PROPOSAL.md "Engineering brief" for sources).
+
+models:
+  llada_8b_instruct:
+    hf_id: GSAI-ML/LLaDA-8B-Instruct
+    params: 8B
+    license: MIT
+    family: LLaDA
+    primary: true                # main instruction-eval target
+    notes: SFT'd masked-diffusion LM, trained from scratch. trust_remote_code.
+
+  llada_8b_base:
+    hf_id: GSAI-ML/LLaDA-8B-Base
+    params: 8B
+    license: MIT
+    family: LLaDA
+    notes: Base (no SFT); use for log-likelihood scoring (get_log_likelihood.py).
+
+  llada_moe_instruct:
+    hf_id: inclusionAI/LLaDA-MoE-7B-A1B-Instruct
+    params: 7B total / ~1.4B active
+    license: verify-on-hf        # confirm tag in HF UI before release
+    family: LLaDA-MoE
+    notes: First MoE dLLM; ~1.4B active params -> cheapest real inference.
+
+  dream_7b_instruct:
+    hf_id: Dream-org/Dream-v0-Instruct-7B
+    params: 7B
+    license: Apache-2.0          # inferred from Qwen2.5 lineage; verify tag
+    family: Dream
+    notes: Diffusion-adapted from Qwen2.5-7B. Second model for cross-family check.
+
+  dream_coder_7b:
+    hf_id: Dream-org/Dream-Coder-v0-Instruct-7B
+    params: 7B
+    license: Apache-2.0          # verify tag
+    family: Dream
+    notes: Code-specialized; for HumanEval/MBPP.
+
+# Baseline code to build on (do NOT reimplement the cache from scratch).
+baseline_repos:
+  fast_dllm:
+    url: https://github.com/NVlabs/Fast-dLLM
+    license: Apache-2.0
+    provides: block-wise approx KV cache, DualCache, confidence parallel decoding
+    role: primary cache implementation to extend with quantized storage
+  dllm_cache:
+    url: https://github.com/maomaocun/dLLM-cache
+    provides: adaptive prompt+response caching; lm-eval scripts (GSM8K, BBH)
+  dpad:
+    url: https://github.com/Crys-Chen/DPad
+    provides: suffix-dropout training-free acceleration
+  llada_official:
+    url: https://github.com/ML-GSAI/LLaDA
+    provides: generate.py, get_log_likelihood.py, lm-eval integration
+  dream_official:
+    url: https://github.com/DreamLM/Dream

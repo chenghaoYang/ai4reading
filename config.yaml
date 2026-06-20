@@ -5,15 +5,21 @@
 interests:
   # Keywords used to rank/filter papers (case-insensitive, matches title & abstract)
   keywords:
+    # ── dKV-Quant research focus (efficient diffusion-LLM inference) ──
+    - "diffusion language model"
+    - "KV cache"
+    - "KV cache quantization"
+    - "efficient inference"
+    - "low-bit quantization"
+    - "post-training quantization"
+    - "algorithm hardware co-design"
+    # ── broader interests ──
     - "large language model"
     - "reasoning"
     - "multimodal"
     - "agent"
     - "diffusion"
-    - "alignment"
-    - "RLHF"
     - "code generation"
-    - "retrieval augmented"
     - "vision language"
 
   # ArXiv categories to monitor (see: https://arxiv.org/category_taxonomy)

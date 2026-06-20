@@ -1,0 +1,22 @@
+# dKV-Quant dependencies.
+#
+# The no-GPU prototyping phase needs only the first block (numpy + pytest).
+# Everything else is for the GPU eval phase (run_eval.py / prepare_data.py).
+
+# --- no-GPU core (CPU simulation, profiling, tests) ---
+numpy>=1.24
+pytest>=7.0
+PyYAML>=6.0
+
+# --- data prep (no GPU, needs network) ---
+datasets>=2.18.0
+huggingface_hub>=0.23.0
+
+# --- GPU eval phase (requires CUDA) ---
+# torch>=2.3.0
+# transformers>=4.44.0
+# accelerate>=0.30.0
+# bitsandbytes>=0.43.0        # weight-only 4-bit load path
+# lm-eval>=0.4.3              # EleutherAI lm-evaluation-harness
+# Uncomment the GPU block on a CUDA machine. Kept commented so the package
+# installs and tests run on a CPU-only box.

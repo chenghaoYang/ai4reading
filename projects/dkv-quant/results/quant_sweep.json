@@ -1,0 +1,63 @@
+{
+  "config": {
+    "bits": 4,
+    "group_size": 128,
+    "momentum": 0.5,
+    "d_model": 128,
+    "heads": 8,
+    "layers": 4,
+    "gen_len": 32,
+    "seed": 0,
+    "out": "results/quant_sweep.json"
+  },
+  "results": {
+    "fp16": {
+      "rel_l2": 0.0,
+      "snr_db": Infinity,
+      "bits": 16.0,
+      "compression": 1.0,
+      "is_ours": false,
+      "desc": "No quantization \u2014 upper-bound reference (16-bit)."
+    },
+    "ar_static": {
+      "rel_l2": 0.13649575561077756,
+      "snr_db": 17.731808729549066,
+      "bits": 4.0,
+      "compression": 2.67,
+      "is_ours": false,
+      "desc": "AR-style write-once calibration frozen at step 0. Models dropping an off-the-shelf KV quantizer onto a dLLM; expected to degrade."
+    },
+    "ar_static_hadamard": {
+      "rel_l2": 0.1467299738486648,
+      "snr_db": 17.273423417174136,
+      "bits": 4.0,
+      "compression": 2.67,
+      "is_ours": false,
+      "desc": "AR-static + Hadamard rotation (RotateKV/KVLinC-style outlier smoothing), still frozen calibration."
+    },
+    "fresh_per_step": {
+      "rel_l2": 0.06931786204370635,
+      "snr_db": 23.18553991234175,
+      "bits": 4.0,
+      "compression": 2.67,
+      "is_ours": false,
+      "desc": "Recalibrate fully every step \u2014 accurate but the most expensive; an oracle-ish reference for the gap."
+    },
+    "dkv_step_aware": {
+      "rel_l2": 0.0780501452925764,
+      "snr_db": 22.16735295443892,
+      "bits": 4.0,
+      "compression": 2.67,
+      "is_ours": true,
+      "desc": "PROPOSED: EMA step-aware recalibration using the dLLM's warm-step recomputation as a free calibration probe."
+    },
+    "dkv_step_aware_hadamard": {
+      "rel_l2": 0.07851920330252848,
+      "snr_db": 22.116687093905394,
+      "bits": 4.0,
+      "compression": 2.67,
+      "is_ours": true,
+      "desc": "PROPOSED + Hadamard rotation: step-aware EMA on rotated channels for the strongest outlier handling."
+    }
+  }
+}
